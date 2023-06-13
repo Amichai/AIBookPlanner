@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 const description = ref('')
 
@@ -41,25 +41,35 @@ const generateTitles = () => {
   ]
 }
 
+const isTitleSelected = ref(false)
+
 const selectTitle = (evt) => {
-  const liElements = document.querySelectorAll('li.selected');
+  const liElements = document.querySelectorAll('div.selected-title');
 
   liElements.forEach((li) => {
-    li.classList.remove('selected');
+    li.classList.remove('selected-title');
   });
 
-  evt.target.classList.add('selected');
+  evt.target.classList.add('selected-title');
+  isTitleSelected.value = true;
 }
 
-const selectCustomTitle = (evt) => {
-  const liElements = document.querySelectorAll('li.selected');
+const selectCustomTitle = () => {
+  const liElements = document.querySelectorAll('div.selected-title');
 
   liElements.forEach((li) => {
-    li.classList.remove('selected');
+    li.classList.remove('selected-title');
   });
 
-  document.querySelector('#custom-title-input').classList.add('selected');
+  document.querySelector('#custom-title-input').classList.add('selected-title');
+
+  isTitleSelected.value = true;
 }
+
+const canGenerateTitle = computed(() => {
+  return description.value.length > 0
+    && isTitleSelected.value;
+})
 
 </script>
 
@@ -76,23 +86,39 @@ const selectCustomTitle = (evt) => {
       ></textarea>
 
       <h3>
-        Step 2 - Let's select a title:
+        Step 2 - Select a title:
       </h3>
       <button 
         class="button"
         @click="generateTitles"
         :disabled="!description">
         Show Me Some Titles
-    </button>
+      </button>
 
-      <ul class="title-options">
-        <li v-for="title in titleOptions" :key="title" @click="selectTitle">
-          {{ title }}
+      <ul class="title-options" v-show="description">
+        <li v-for="title in titleOptions" :key="title">
+          <div @click="selectTitle" class="title-option">
+            {{ title }}
+          </div>
         </li>
-        <li @click="selectCustomTitle" id="custom-title-input">
-          <input type="text" class="input">
+        <li>
+          <div 
+            @click="selectCustomTitle" 
+            id="custom-title-input" 
+            class="title-option">
+            <input type="text" class="input" placeholder="Your custom title">
+          </div>
         </li>
       </ul>
+      <h3>
+        Step 3 - Generate an Outline:
+      </h3>
+      <button 
+        class="button"
+        @click="generateTitles"
+        :disabled="!canGenerateTitle">
+        Take me to the outline!
+      </button>
     </div>
     <br><br><br><br><br><br>
   </main>
@@ -122,7 +148,7 @@ const selectCustomTitle = (evt) => {
 }
 
 .input {
-  width: calc(100% - 0.7rem);
+  width: calc(100% - 1rem);
   line-height: 1.3;
   border: none;
   border-radius: 0.3rem;
@@ -134,7 +160,7 @@ const selectCustomTitle = (evt) => {
   font-family: var(--ff-accent);
 }
 
-li {
+.title-option {
   padding: 0.1rem 0.5rem;
   font-family: var(--ff-accent);
 }
@@ -149,15 +175,15 @@ li {
   }
 }
 
-.selected {
-  --animation-delay: 1s;
+.selected-title {
+  --animation-delay: 0.4s;
   position: relative;
   overflow: hidden;
   border-right: 1px solid var(--clr-accent);
   transition:  border-right 0s linear var(--animation-delay);
 }
 
-.selected::after {
+.selected-title::after {
     content: '';
     position: absolute;
     left: 0;
