@@ -31,11 +31,11 @@ const generateTitles = () => {
     'Stellar Stories: Writing Science Fiction with Flair',
     'Spinning Tales in Space: A Creative Writing Guide',
     'Writing Fictions of the Future',
-    'Captivating Science Fiction: Crafting Epic Storytellin',
+    'Captivating Science Fiction: Crafting Epic Storytelling',
     'The Worlds Ahead: Crafting Inventive Sci-Fi Stories',
     'Crafting Vivid Sci-Fi Narratives',
     'Experienced Authors & Innovative Sci-Fi: Writing Methodologies',
-    'Writing Alternative Worlds: Tips for Writing Sci-F',
+    'Writing Alternative Worlds: Tips for Writing Sci-Fi',
     'Crafting Epic Sci-Fi: Storytelling and Technique',
     'Becoming a Sci-Fi Storyteller: Writing Techniques & Inspiration'
   ]
@@ -134,15 +134,41 @@ const selectCustomTitle = (evt) => {
   font-family: var(--ff-accent);
 }
 
-.selected {
-  border: 1px solid var(--clr-accent);
-  border-radius: 0.3rem;
-}
-
 li {
   padding: 0.1rem 0.5rem;
   font-family: var(--ff-accent);
 }
 
+
+@keyframes drawBorder {
+  from {
+    width: 0;
+  }
+  to {
+      width: 100%;
+  }
+}
+
+.selected {
+  --animation-delay: 1s;
+  position: relative;
+  overflow: hidden;
+  border-right: 1px solid var(--clr-accent);
+  transition:  border-right 0s linear var(--animation-delay);
+}
+
+.selected::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    border-top: 1px solid var(--clr-accent);
+    border-left: 1px solid var(--clr-accent);
+    border-bottom: 1px solid var(--clr-accent);
+    
+    animation: drawBorder var(--animation-delay) linear forwards;
+}
 
 </style>
