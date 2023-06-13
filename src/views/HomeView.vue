@@ -1,31 +1,148 @@
 <script setup>
+import { ref } from 'vue'
+
+const description = ref('')
+
+const placeholderOptions = [
+  'A small, furry rabbit embarks on an unlikely adventure to save a stranded whale.',
+  'Following an unexplainable beacon, a gang of rebellious teens take on a powerful evil tyrant.',
+  'A mischievous rock wanders the world, collecting insights from its travels and sharing them with anyone willing to listen.',
+  'When a talking raccoon is mistaken for a bandit, the unlikeliest of friends must join forces to save the day.',
+  'A medieval knight teams up with a crew of modern-day urbanites to take down an alien invasion.',
+  'Three witches must cook up a magical potion to reverse a curse before their town is destroyed.',
+  'A single forgotten happy hour leads to one epic night of adventure and excitement.',
+  'A reluctant space explorer embarks on a mission to locate a mysterious planet that could hold the key to saving humanity.',
+  'A detective with extraordinary powers and an unlikely sidekick team up to unravel a centuries-old mystery.',
+  'When a toy box transports two children to a distant galaxy, they must enlist the help of intergalactic superheroes to make their way back home.',
+  'Discover how you can save money by eating cereal for every meal',
+  'The bizarre history of the bathroom fixture from ancient Egypt to modern day use',
+  'Plant communication',
+  'Uncovering the fascinating secrets of bees',
+  "The intricate formalities of visiting a foreign royal family, so you don't make any faux pas!"
+]
+
+const placeholder = placeholderOptions[Math.floor(Math.random() * placeholderOptions.length)];
+
+
+const titleOptions = ref([])
+
+const generateTitles = () => {
+  titleOptions.value = [
+    'Stellar Stories: Writing Science Fiction with Flair',
+    'Spinning Tales in Space: A Creative Writing Guide',
+    'Writing Fictions of the Future',
+    'Captivating Science Fiction: Crafting Epic Storytellin',
+    'The Worlds Ahead: Crafting Inventive Sci-Fi Stories',
+    'Crafting Vivid Sci-Fi Narratives',
+    'Experienced Authors & Innovative Sci-Fi: Writing Methodologies',
+    'Writing Alternative Worlds: Tips for Writing Sci-F',
+    'Crafting Epic Sci-Fi: Storytelling and Technique',
+    'Becoming a Sci-Fi Storyteller: Writing Techniques & Inspiration'
+  ]
+}
+
+const selectTitle = (evt) => {
+  const liElements = document.querySelectorAll('li.selected');
+
+  liElements.forEach((li) => {
+    li.classList.remove('selected');
+  });
+
+  evt.target.classList.add('selected');
+}
+
+const selectCustomTitle = (evt) => {
+  const liElements = document.querySelectorAll('li.selected');
+
+  liElements.forEach((li) => {
+    li.classList.remove('selected');
+  });
+
+  document.querySelector('#custom-title-input').classList.add('selected');
+}
+
 </script>
 
 <template>
   <main>
     <div class="wrapper flow">
-      <h1>Title</h1>
-      <p>Who moved my cheese dolcelatte port-salut. Bavarian bergkase edam cream cheese caerphilly danish fontina
-        everyone loves feta squirty cheese. Goat monterey jack cheese and biscuits st. agur blue cheese goat cut the
-        cheese croque monsieur cheesy grin. Hard cheese cow squirty cheese feta blue castello cauliflower cheese queso
-        edam. Lancashire.</p>
-      <p>The big cheese swiss parmesan. Ricotta cottage cheese feta cheese triangles melted cheese cheesy feet rubber
-        cheese swiss. Cheese and biscuits cheese slices smelly cheese cheese and wine edam fondue pepper jack say
-        cheese. Boursin cheese triangles cheese and biscuits bocconcini cow cottage cheese croque monsieur port-salut.
-        Babybel red leicester roquefort parmesan.</p>
-      <p>Cheese strings chalk and cheese boursin. Airedale cheeseburger cheesecake roquefort dolcelatte chalk and cheese
-        caerphilly cheese triangles. Boursin feta babybel cheesecake rubber cheese cauliflower cheese cow red leicester.
-        Cheese strings monterey jack cream cheese smelly cheese stilton feta melted cheese cow. Red leicester rubber
-        cheese fondue say cheese.</p>
-      <p>Cheesy grin cauliflower cheese danish fontina. Caerphilly taleggio gouda squirty cheese smelly cheese
-        mascarpone cheesy grin pepper jack. Bavarian bergkase red leicester camembert de normandie camembert de
-        normandie jarlsberg boursin jarlsberg goat. Pecorino.</p>
-      <p>Ricotta mozzarella dolcelatte. Goat rubber cheese queso edam cheese triangles fromage frais cheddar danish
-        fontina. Hard cheese cauliflower cheese stilton swiss camembert de normandie fondue everyone loves cheese
-        strings. Brie gouda jarlsberg paneer lancashire cottage cheese fromage frais.</p>
-      <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nemo, voluptatum.</h3>
-      <h2>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nemo, voluptatum.</h2>
-      <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nemo, voluptatum.</h3>
+      <h1>AI Book Generator</h1>
+      <h3>
+        Step 1 - What is this book about?:
+      </h3>
+      <textarea class="text-area" rows="3"
+      :placeholder="placeholder"
+        v-model="description"
+      ></textarea>
+
+      <h3>
+        Step 2 - Let's select a title:
+      </h3>
+      <button 
+        class="button"
+        @click="generateTitles"
+        :disabled="!description">
+        Show Me Some Titles
+    </button>
+
+      <ul class="title-options">
+        <li v-for="title in titleOptions" :key="title" @click="selectTitle">
+          {{ title }}
+        </li>
+        <li @click="selectCustomTitle" id="custom-title-input">
+          <input type="text" class="input">
+        </li>
+      </ul>
     </div>
+    <br><br><br><br><br><br>
   </main>
 </template>
+
+<style scoped>
+.text-area {
+  height: 100%;
+  width: 100%;
+  
+  word-break: break-word;
+  box-sizing: border-box;
+  line-height: 1.3;
+  padding: 0.5rem;
+  resize: none;
+  outline: none;
+  font-family: var(--ff-base);
+  background-color: rgb(48, 47, 51);
+  font-size: var(--fs-0);
+  border-radius: 0.3rem;
+  border: 1px solid var(--clr-accent);
+}
+
+.button {
+  font-size: var(--fs-0);
+  padding: 0.5rem 1rem;
+}
+
+.input {
+  width: calc(100% - 0.7rem);
+  line-height: 1.3;
+  border: none;
+  border-radius: 0.3rem;
+  padding: 0.1rem 0.5rem;
+  font-family: var(--ff-base);
+  background-color: rgb(48, 47, 51);
+  font-size: var(--fs-0);
+  outline: none;
+  font-family: var(--ff-accent);
+}
+
+.selected {
+  border: 1px solid var(--clr-accent);
+  border-radius: 0.3rem;
+}
+
+li {
+  padding: 0.1rem 0.5rem;
+  font-family: var(--ff-accent);
+}
+
+
+</style>
