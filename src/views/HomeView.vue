@@ -27,18 +27,40 @@ const placeholder = placeholderOptions[Math.floor(Math.random() * placeholderOpt
 const titleOptions = ref([])
 
 const generateTitles = () => {
-  titleOptions.value = [
-    'Stellar Stories: Writing Science Fiction with Flair',
-    'Spinning Tales in Space: A Creative Writing Guide',
-    'Writing Fictions of the Future',
-    'Captivating Science Fiction: Crafting Epic Storytelling',
-    'The Worlds Ahead: Crafting Inventive Sci-Fi Stories',
-    'Crafting Vivid Sci-Fi Narratives',
-    'Experienced Authors & Innovative Sci-Fi: Writing Methodologies',
-    'Writing Alternative Worlds: Tips for Writing Sci-Fi',
-    'Crafting Epic Sci-Fi: Storytelling and Technique',
-    'Becoming a Sci-Fi Storyteller: Writing Techniques & Inspiration'
-  ]
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  var raw = JSON.stringify({
+    "description": "the history of poetry"
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+
+fetch("https://i27f13a1be.execute-api.us-east-1.amazonaws.com/dev/titles", requestOptions)
+  .then(response => response.json())
+  .then(result => { 
+    titleOptions.value = result['body'].split('\\n').map((title) => title.trim().replace(/(^")|("$)/g, '')).filter((title) => title)
+    console.log(result)
+  })
+  .catch(error => console.log('error', error));
+
+  // titleOptions.value = [
+  //   'Stellar Stories: Writing Science Fiction with Flair',
+  //   'Spinning Tales in Space: A Creative Writing Guide',
+  //   'Writing Fictions of the Future',
+  //   'Captivating Science Fiction: Crafting Epic Storytelling',
+  //   'The Worlds Ahead: Crafting Inventive Sci-Fi Stories',
+  //   'Crafting Vivid Sci-Fi Narratives',
+  //   'Experienced Authors & Innovative Sci-Fi: Writing Methodologies',
+  //   'Writing Alternative Worlds: Tips for Writing Sci-Fi',
+  //   'Crafting Epic Sci-Fi: Storytelling and Technique',
+  //   'Becoming a Sci-Fi Storyteller: Writing Techniques & Inspiration'
+  // ]
 }
 
 const isTitleSelected = ref(false)
@@ -71,14 +93,22 @@ const canGenerateTitle = computed(() => {
     && isTitleSelected.value;
 })
 
+
+const generateBook = () => {
+  //Lambda -> OpenAI API
+  //Navigate to a book page with a unique url blank chapters
+
+  //suggested donation dialog
+}
 </script>
 
 <template>
   <main>
     <div class="wrapper flow">
       <h1>AI Book Generator</h1>
+      <p class="subtitle">built by <a href="https://www.youtube.com/c/ami1649/">ami1649</a></p>
       <h3>
-        Step 1 - What is this book about?:
+        Step 1 - What is this book about?
       </h3>
       <textarea class="text-area" rows="3"
       :placeholder="placeholder"
@@ -111,16 +141,16 @@ const canGenerateTitle = computed(() => {
         </li>
       </ul>
       <h3>
-        Step 3 - Generate an Outline:
+        Step 3 - Make a Book!
       </h3>
       <button 
         class="button"
-        @click="generateTitles"
+        @click="generateBook"
         :disabled="!canGenerateTitle">
-        Take me to the outline!
+        <img src="/src/assets/book_emoji.png" alt="book_emoji" class="fire-emoji">
       </button>
     </div>
-    <br><br><br><br><br><br>
+    <br><br><br>
   </main>
 </template>
 
@@ -197,4 +227,14 @@ const canGenerateTitle = computed(() => {
     animation: drawBorder var(--animation-delay) linear forwards;
 }
 
+.subtitle {
+  font-size: var(--fs--2);
+}
+
+.fire-emoji {
+  width: 50px;
+}
+button:disabled > .fire-emoji {
+  filter: grayscale(100%);
+}
 </style>
