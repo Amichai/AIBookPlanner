@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
+import { getTitles, getEpigraphs } from '../apiHelper.js'
 
 const description = ref('')
 
@@ -25,45 +26,38 @@ const placeholder = placeholderOptions[Math.floor(Math.random() * placeholderOpt
 
 
 const titleOptions = ref([])
+const epigraphOptions = ref([])
 
-const generateTitles = () => {
-  var myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
+const customTitle = ref('')
 
-  var raw = JSON.stringify({
-    "description": "the history of poetry"
-  });
+const convertGPTResponseToList = (response) => 
+  {
+    return response['body']
+      .split('\\n')
+      .map((title) => title.trim().replace(/(^")|("$)/g, ''))
+      .map((title) => title.replace(/^\d+\.\s*/, ''))
+      .map((title) => title.replace(/\\"/g, '"'))
+      .filter((title) => title)
+  }
 
-  var requestOptions = {
-    method: 'POST',
-    headers: myHeaders,
-    body: raw,
-    redirect: 'follow'
-  };
 
-fetch("https://i27f13a1be.execute-api.us-east-1.amazonaws.com/dev/titles", requestOptions)
-  .then(response => response.json())
-  .then(result => { 
-    titleOptions.value = result['body'].split('\\n').map((title) => title.trim().replace(/(^")|("$)/g, '')).filter((title) => title)
-    console.log(result)
-  })
-  .catch(error => console.log('error', error));
+const generateTitles = async () => {
+  const result = await getTitles(description.value)
+  titleOptions.value = convertGPTResponseToList(result)
+  console.log(result)
+}
 
-  // titleOptions.value = [
-  //   'Stellar Stories: Writing Science Fiction with Flair',
-  //   'Spinning Tales in Space: A Creative Writing Guide',
-  //   'Writing Fictions of the Future',
-  //   'Captivating Science Fiction: Crafting Epic Storytelling',
-  //   'The Worlds Ahead: Crafting Inventive Sci-Fi Stories',
-  //   'Crafting Vivid Sci-Fi Narratives',
-  //   'Experienced Authors & Innovative Sci-Fi: Writing Methodologies',
-  //   'Writing Alternative Worlds: Tips for Writing Sci-Fi',
-  //   'Crafting Epic Sci-Fi: Storytelling and Technique',
-  //   'Becoming a Sci-Fi Storyteller: Writing Techniques & Inspiration'
-  // ]
+const generateEpigraphs = async () => {
+  console.log(description.value)
+
+  const title = isCustomTitleSelected.value ? customTitle.value : selectedTitle.value
+  const result = await getEpigraphs(description.value, title)
+  epigraphOptions.value = convertGPTResponseToList(result)
 }
 
 const isTitleSelected = ref(false)
+const isCustomTitleSelected = ref(false)
+const selectedTitle = ref('')
 
 const selectTitle = (evt) => {
   const liElements = document.querySelectorAll('div.selected-title');
@@ -73,6 +67,8 @@ const selectTitle = (evt) => {
   });
 
   evt.target.classList.add('selected-title');
+
+  selectedTitle.value = evt.target.innerText
   isTitleSelected.value = true;
 }
 
@@ -86,9 +82,10 @@ const selectCustomTitle = () => {
   document.querySelector('#custom-title-input').classList.add('selected-title');
 
   isTitleSelected.value = true;
+  isCustomTitleSelected.value = true;
 }
 
-const canGenerateTitle = computed(() => {
+const canGenerateBook = computed(() => {
   return description.value.length > 0
     && isTitleSelected.value;
 })
@@ -111,7 +108,7 @@ const generateBook = () => {
         Step 1 - What is this book about?
       </h3>
       <textarea class="text-area" rows="3"
-      :placeholder="placeholder"
+        :placeholder="placeholder"
         v-model="description"
       ></textarea>
 
@@ -136,17 +133,35 @@ const generateBook = () => {
             @click="selectCustomTitle" 
             id="custom-title-input" 
             class="title-option">
-            <input type="text" class="input" placeholder="Your custom title">
+            <input type="text" class="input" placeholder="Your custom title" v-model="customTitle">
           </div>
         </li>
       </ul>
+      <h3>Step 3 - Select an epigraph</h3>
+      <button 
+        class="button"
+        @click="generateEpigraphs"
+        :disabled="!canGenerateBook">
+        Show Me Epigraphs
+      </button>
+
+      <p class="subtitle" v-if="canGenerateBook"><i>Warning! All these quotes were invented and AI and are likely not real!</i></p>
+
+      <ul class="title-options" v-show="description">
+        <li v-for="epigraph in epigraphOptions" :key="epigraph">
+          <div @click="selectTitle" class="title-option">
+            {{ epigraph }}
+          </div>
+        </li>
+      </ul>
+
       <h3>
-        Step 3 - Make a Book!
+        Step 4 - Make a Book!
       </h3>
       <button 
         class="button"
         @click="generateBook"
-        :disabled="!canGenerateTitle">
+        :disabled="!canGenerateBook">
         <img src="/src/assets/book_emoji.png" alt="book_emoji" class="fire-emoji">
       </button>
     </div>
