@@ -1,8 +1,11 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { getTitles, getEpigraphs } from '../apiHelper.js'
+import LoadingDialog from '../components/LoadingDialog.vue';
+
 
 const description = ref('')
+const isAIThinking = ref(false)
 
 const placeholderOptions = [
   'A small, furry rabbit embarks on an unlikely adventure to save a stranded whale.',
@@ -30,34 +33,44 @@ const epigraphOptions = ref([])
 
 const customTitle = ref('')
 
-const convertGPTResponseToList = (response) => 
-  {
-    return response['body']
-      .split('\\n')
-      .map((title) => title.trim().replace(/(^")|("$)/g, ''))
-      .map((title) => title.replace(/^\d+\.\s*/, ''))
-      .map((title) => title.replace(/\\"/g, '"'))
-      .filter((title) => title)
-  }
+const convertGPTResponseToList = (response) => {
+  return response['body']
+    .split('\\n')
+    .map((title) => title.trim().replace(/(^")|("$)/g, ''))
+    .map((title) => title.replace(/^\d+\.\s*/, ''))
+    .map((title) => title.replace(/\\"/g, '"'))
+    .filter((title) => title)
+}
 
 
 const generateTitles = async () => {
-  const result = await getTitles(description.value)
-  titleOptions.value = convertGPTResponseToList(result)
-  console.log(result)
+  isAIThinking.value = true
+  try {
+    const result = await getTitles(description.value)
+    titleOptions.value = convertGPTResponseToList(result)
+    console.log(result)
+  } catch (e) {
+    console.log(e)
+  }
+  isAIThinking.value = false
 }
 
 const generateEpigraphs = async () => {
-  console.log(description.value)
-
-  const title = isCustomTitleSelected.value ? customTitle.value : selectedTitle.value
-  const result = await getEpigraphs(description.value, title)
-  epigraphOptions.value = convertGPTResponseToList(result)
+  isAIThinking.value = true
+  try {
+    const title = isCustomTitleSelected.value ? customTitle.value : selectedTitle.value
+    const result = await getEpigraphs(description.value, title)
+    epigraphOptions.value = convertGPTResponseToList(result)
+  } catch (e) {
+    console.log(e)
+  }
+  isAIThinking.value = false
 }
 
 const isTitleSelected = ref(false)
 const isCustomTitleSelected = ref(false)
 const selectedTitle = ref('')
+const selectedEpigraph = ref('')
 
 const selectTitle = (evt) => {
   const liElements = document.querySelectorAll('div.selected-title');
@@ -90,8 +103,23 @@ const canGenerateBook = computed(() => {
     && isTitleSelected.value;
 })
 
+const selectEpigraph = (evt) => {
+  const liElements = document.querySelectorAll('div.selected-epigraph');
+
+  liElements.forEach((li) => {
+    li.classList.remove('selected-epigraph');
+  });
+
+  evt.target.classList.add('selected-epigraph');
+
+  selectedEpigraph.value = evt.target.innerText
+}
 
 const generateBook = () => {
+
+  /// Title, Epigraph, Description
+
+  /// write what we have to dynamo, kick off a long running lambda
   //Lambda -> OpenAI API
   //Navigate to a book page with a unique url blank chapters
 
@@ -100,6 +128,15 @@ const generateBook = () => {
 </script>
 
 <template>
+  <LoadingDialog :isOpen="isAIThinking">
+    <div class="lds-hourglass"></div>
+    <div>
+      <i>
+        AI is thinking!</i>
+      <br>
+      (this could take a minute 😴)
+    </div>
+  </LoadingDialog>
   <main>
     <div class="wrapper flow">
       <h1>AI Book Generator</h1>
@@ -107,18 +144,12 @@ const generateBook = () => {
       <h3>
         Step 1 - What is this book about?
       </h3>
-      <textarea class="text-area" rows="3"
-        :placeholder="placeholder"
-        v-model="description"
-      ></textarea>
+      <textarea class="text-area" rows="3" :placeholder="placeholder" v-model="description"></textarea>
 
       <h3>
         Step 2 - Select a title:
       </h3>
-      <button 
-        class="button"
-        @click="generateTitles"
-        :disabled="!description">
+      <button class="button" @click="generateTitles" :disabled="!description">
         Show Me Some Titles
       </button>
 
@@ -129,23 +160,18 @@ const generateBook = () => {
           </div>
         </li>
         <li>
-          <div 
-            @click="selectCustomTitle" 
-            id="custom-title-input" 
-            class="title-option">
+          <div @click="selectCustomTitle" id="custom-title-input" class="title-option">
             <input type="text" class="input" placeholder="Your custom title" v-model="customTitle">
           </div>
         </li>
       </ul>
       <h3>Step 3 - Select an epigraph</h3>
-      <button 
-        class="button"
-        @click="generateEpigraphs"
-        :disabled="!canGenerateBook">
-        Show Me Epigraphs
+      <button class="button" @click="generateEpigraphs" :disabled="!canGenerateBook">
+        Show Me (fake) Epigraphs
       </button>
 
-      <p class="subtitle" v-if="canGenerateBook"><i>Warning! All these quotes were invented and AI and are likely not real!</i></p>
+      <p class="subtitle" v-if="epigraphOptions.length"><i>Warning! All these quotes were invented by AI and are likely not
+          real</i></p>
 
       <ul class="title-options" v-show="description">
         <li v-for="epigraph in epigraphOptions" :key="epigraph">
@@ -158,11 +184,9 @@ const generateBook = () => {
       <h3>
         Step 4 - Make a Book!
       </h3>
-      <button 
-        class="button"
-        @click="generateBook"
-        :disabled="!canGenerateBook">
-        <img src="/src/assets/book_emoji.png" alt="book_emoji" class="fire-emoji">
+      <button class="button" @click="generateBook" :disabled="!canGenerateBook">
+        <!-- <img src="/src/assets/book_emoji.png" alt="book_emoji" class="fire-emoji"> -->
+        Let's do this!
       </button>
     </div>
     <br><br><br>
@@ -173,7 +197,7 @@ const generateBook = () => {
 .text-area {
   height: 100%;
   width: 100%;
-  
+
   word-break: break-word;
   box-sizing: border-box;
   line-height: 1.3;
@@ -215,31 +239,32 @@ const generateBook = () => {
   from {
     width: 0;
   }
+
   to {
-      width: 100%;
+    width: 100%;
   }
 }
 
-.selected-title {
+.selected-title .selected-epigraph {
   --animation-delay: 0.4s;
   position: relative;
   overflow: hidden;
   border-right: 1px solid var(--clr-accent);
-  transition:  border-right 0s linear var(--animation-delay);
+  transition: border-right 0s linear var(--animation-delay);
 }
 
 .selected-title::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 100%;
-    border-top: 1px solid var(--clr-accent);
-    border-left: 1px solid var(--clr-accent);
-    border-bottom: 1px solid var(--clr-accent);
-    
-    animation: drawBorder var(--animation-delay) linear forwards;
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  border-top: 1px solid var(--clr-accent);
+  border-left: 1px solid var(--clr-accent);
+  border-bottom: 1px solid var(--clr-accent);
+
+  animation: drawBorder var(--animation-delay) linear forwards;
 }
 
 .subtitle {
@@ -249,7 +274,44 @@ const generateBook = () => {
 .fire-emoji {
   width: 50px;
 }
-button:disabled > .fire-emoji {
+
+button:disabled>.fire-emoji {
   filter: grayscale(100%);
+}
+
+.lds-hourglass {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.lds-hourglass:after {
+  content: " ";
+  display: block;
+  border-radius: 50%;
+  width: 0;
+  height: 0;
+  margin: 8px;
+  box-sizing: border-box;
+  border: 32px solid #cef;
+  border-color: #cef transparent #cef transparent;
+  animation: lds-hourglass 1.2s infinite;
+}
+
+@keyframes lds-hourglass {
+  0% {
+    transform: rotate(0);
+    animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  }
+
+  50% {
+    transform: rotate(900deg);
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+
+  100% {
+    transform: rotate(1800deg);
+  }
 }
 </style>
