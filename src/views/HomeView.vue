@@ -152,18 +152,16 @@ const generateBook = () => {
             Show Me (fake) Epigraphs
           </button>
         </div>
-        <template #popper v-if="!canGenerateBook">
+        <template #popper v-if="!canGenerateBook && titleOptions.length">
           Click a book title to select it
         </template>
       </VTooltip>
 
-      <p class="subtitle" v-if="epigraphOptions.length"><i>Warning! All these quotes were invented by AI and are likely
-          not
-          real</i></p>
+      <p class="subtitle" v-if="epigraphOptions.length"><i>Warning! These quotes were invented by AI and are likely not real</i></p>
 
       <ul class="title-options" v-show="description">
         <li v-for="epigraph in epigraphOptions" :key="epigraph">
-          <div @click="selectTitle" class="title-option">
+          <div @click="selectEpigraph" class="title-option">
             {{ epigraph }}
           </div>
         </li>
@@ -175,11 +173,10 @@ const generateBook = () => {
       <VTooltip>
         <div>
           <button class="button" @click="generateBook" :disabled="!canGenerateBook">
-            <!-- <img src="/src/assets/book_emoji.png" alt="book_emoji" class="fire-emoji"> -->
-            Let's do this!
+            Let's do this 🫡
           </button>
         </div>
-        <template #popper v-if="!canGenerateBook">
+        <template #popper v-if="!canGenerateBook && titleOptions.length">
           Click a book title to select it
         </template>
       </VTooltip>
@@ -240,7 +237,7 @@ const generateBook = () => {
   }
 }
 
-.selected-title .selected-epigraph {
+.selected-title, .selected-epigraph {
   --animation-delay: 0.4s;
   position: relative;
   overflow: hidden;
@@ -248,7 +245,7 @@ const generateBook = () => {
   transition: border-right 0s linear var(--animation-delay);
 }
 
-.selected-title::after {
+.selected-title::after, .selected-epigraph::after {
   content: '';
   position: absolute;
   left: 0;
