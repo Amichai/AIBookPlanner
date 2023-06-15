@@ -95,7 +95,9 @@ const selectEpigraph = (evt) => {
 
 const generateBook = () => {
 
-  /// Title, Epigraph, Description
+  // upload to dynamo: description, title, epigraph
+  /// trigger a lambda to generate the book
+  /// Open a new tab with the book content 
 
   /// write what we have to dynamo, kick off a long running lambda
   //Lambda -> OpenAI API
@@ -110,7 +112,7 @@ const generateBook = () => {
     <div class="lds-hourglass"></div>
     <div>
       <i>
-        AI is thinking!</i>
+        AI thinking!</i>
       <br>
       (this could take a minute 😴)
     </div>
@@ -128,7 +130,10 @@ const generateBook = () => {
       <h3>
         Step 2 - Select a title
       </h3>
-      <button class="button" @click="generateTitles" :disabled="!description">
+      <button 
+        class="button"
+        @click="generateTitles"
+        :disabled="!description">
         Show Me Some Titles
       </button>
 
@@ -138,8 +143,12 @@ const generateBook = () => {
             {{ title }}
           </div>
         </li>
-        <li>
-          <div @click="selectCustomTitle" id="custom-title-input" class="title-option">
+        <li v-if="titleOptions.length">
+          <div 
+            id="custom-title-input"
+            @click="selectCustomTitle"
+            class="title-option"
+            >
             <input type="text" class="input" placeholder="Your custom title" v-model="customTitle">
           </div>
         </li>
@@ -197,7 +206,7 @@ const generateBook = () => {
   resize: none;
   outline: none;
   font-family: var(--ff-base);
-  background-color: rgb(48, 47, 51);
+  background-color: var(--clr-text-background);
   font-size: var(--fs-0);
   border-radius: 0.3rem;
   border: 1px solid var(--clr-accent);
@@ -215,8 +224,8 @@ const generateBook = () => {
   border-radius: 0.3rem;
   padding: 0.1rem 0.5rem;
   font-family: var(--ff-base);
-  background-color: rgb(48, 47, 51);
-  font-size: var(--fs-0);
+  background-color: var(--clr-text-background);
+  font-size: var(--fs-1);
   outline: none;
   font-family: var(--ff-accent);
 }

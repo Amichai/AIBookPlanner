@@ -5,6 +5,7 @@
 :root {
   --clr-text: hsl(204, 20%, 15%);
   --clr-background: #ffffff;
+  --clr-text-background: hsl(0, 7%, 89%);
   --clr-primary: #8fb4ff;
   --clr-secondary: hsl(222, 100%, 96%);
   --clr-accent: #ff8f94;
@@ -26,6 +27,7 @@
   :root {
     --clr-text: hsl(204, 20%, 85%);
     --clr-background: #000000;
+    --clr-text-background: hsl(255, 4%, 19%);
     --clr-primary: #8fb4ff;
     --clr-secondary: hsl(222, 100%, 18%);
     --clr-accent: #ff8f94;
