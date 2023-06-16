@@ -130,10 +130,7 @@ const generateBook = () => {
       <h3>
         Step 2 - Select a title
       </h3>
-      <button 
-        class="button"
-        @click="generateTitles"
-        :disabled="!description">
+      <button class="button" @click="generateTitles" :disabled="!description">
         Show Me Some Titles
       </button>
 
@@ -144,29 +141,28 @@ const generateBook = () => {
           </div>
         </li>
         <li v-if="titleOptions.length">
-          <div 
-            id="custom-title-input"
-            @click="selectCustomTitle"
-            class="title-option"
-            >
+          <div id="custom-title-input" @click="selectCustomTitle" class="title-option">
             <input type="text" class="input" placeholder="Your custom title" v-model="customTitle">
           </div>
         </li>
       </ul>
       <h3>Step 3 - Select an epigraph</h3>
 
-      <VTooltip>
-        <div>
-          <button class="button" @click="generateEpigraphs" :disabled="!canGenerateBook">
-            Show Me (fake) Epigraphs
-          </button>
-        </div>
-        <template #popper v-if="!canGenerateBook && titleOptions.length">
-          Click a book title to select it
-        </template>
-      </VTooltip>
+      <div style="display: flex;">
+        <VTooltip>
+          <div>
+            <button class="button" @click="generateEpigraphs" :disabled="!canGenerateBook">
+              Show Me (fake) Epigraphs
+            </button>
+          </div>
+          <template #popper v-if="!canGenerateBook && titleOptions.length">
+            Select a book title first
+          </template>
+        </VTooltip>
+      </div>
 
-      <p class="subtitle" v-if="epigraphOptions.length"><i>Warning! These quotes were invented by AI and are likely not real</i></p>
+      <p class="subtitle" v-if="epigraphOptions.length"><i>Warning! These quotes were invented by AI and are likely not
+          real</i></p>
 
       <ul class="title-options" v-show="description">
         <li v-for="epigraph in epigraphOptions" :key="epigraph">
@@ -179,16 +175,18 @@ const generateBook = () => {
       <h3>
         Step 4 - Generate Book
       </h3>
-      <VTooltip>
-        <div>
-          <button class="button" @click="generateBook" :disabled="!canGenerateBook">
-            Let's do this 🫡
-          </button>
-        </div>
-        <template #popper v-if="!canGenerateBook && titleOptions.length">
-          Click a book title to select it
-        </template>
-      </VTooltip>
+      <div style="display: flex;">
+        <VTooltip>
+          <div>
+            <button class="button" @click="generateBook" :disabled="!canGenerateBook">
+              Let's do this 🫡
+            </button>
+          </div>
+          <template #popper v-if="!canGenerateBook && titleOptions.length">
+            Click a book title to select it
+          </template>
+        </VTooltip>
+      </div>
     </div>
     <br><br><br>
   </main>
@@ -246,7 +244,8 @@ const generateBook = () => {
   }
 }
 
-.selected-title, .selected-epigraph {
+.selected-title,
+.selected-epigraph {
   --animation-delay: 0.4s;
   position: relative;
   overflow: hidden;
@@ -254,7 +253,8 @@ const generateBook = () => {
   transition: border-right 0s linear var(--animation-delay);
 }
 
-.selected-title::after, .selected-epigraph::after {
+.selected-title::after,
+.selected-epigraph::after {
   content: '';
   position: absolute;
   left: 0;
