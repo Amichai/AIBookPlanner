@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { getTitles, getEpigraphs } from '../apiHelper.js'
+import { getTitles, getEpigraphs, uploadBook } from '../apiHelper.js'
 import LoadingDialog from '../components/LoadingDialog.vue';
 
 const description = ref('')
@@ -95,6 +95,17 @@ const selectEpigraph = (evt) => {
 
 const generateBook = () => {
 
+  // uploadBook(
+  //   description.value,
+  //   selectedTitle.value,
+  //   selectedEpigraph.value
+  // )
+
+  uploadBook(
+    "A reluctant space explorer embarks on a mission to locate a mysterious planet that could hold the key to saving humanity.",
+    "From the Stars",
+    "epigraph1"
+  )
   // upload to dynamo: description, title, epigraph
   /// trigger a lambda to generate the book
   /// Open a new tab with the book content 
@@ -178,7 +189,7 @@ const generateBook = () => {
       <div style="display: flex;">
         <VTooltip>
           <div>
-            <button class="button" @click="generateBook" :disabled="!canGenerateBook">
+            <button class="button" @click="generateBook" :disabled="!canGenerateBook && false">
               Let's do this 🫡
             </button>
           </div>

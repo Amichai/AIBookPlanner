@@ -1,4 +1,4 @@
-
+import { v4 as uuidv4 } from 'uuid';
 
 export const getTitles = async (description) => {
   var myHeaders = new Headers();
@@ -43,4 +43,25 @@ export const getEpigraphs = async (description, title) => {
   const result = await response.json()
 
   return result
+}
+
+export const uploadBook = async (description, title, epigraph) => {
+  let data = { 
+    uuid: uuidv4(),
+    description,
+    title,
+    epigraph,
+   };
+
+  fetch('https://i27f13a1be.execute-api.us-east-1.amazonaws.com/dev/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    // body: JSON.stringify(data),
+    body: JSON.stringify(data),
+  })
+  .then(response => response.json())
+  .then(data => console.log('Success:', data))
+  .catch((error) => console.error('Error:', error));
 }
