@@ -11,7 +11,7 @@ export default {
   props: ['isOpen'],
   methods: {
     close() {
-      this.$emit('close');
+      this.$emit('close')
     }
   }
 }

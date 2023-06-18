@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { getTitles, getEpigraphs, uploadBook } from '../apiHelper.js'
-import LoadingDialog from '../components/LoadingDialog.vue';
+import LoadingDialog from '../components/LoadingDialog.vue'
 import router from '@/router'
 
 const description = ref('')
@@ -26,7 +26,6 @@ const convertGPTResponseToList = (response) => {
   console.log(result)
   return result
 }
-
 
 const generateTitles = async () => {
   isAIThinking.value = true
@@ -58,54 +57,49 @@ const selectedTitle = ref('')
 const selectedEpigraph = ref('')
 
 const selectTitle = (evt) => {
-  const liElements = document.querySelectorAll('div.selected-title');
+  const liElements = document.querySelectorAll('div.selected-title')
 
   liElements.forEach((li) => {
-    li.classList.remove('selected-title');
-  });
+    li.classList.remove('selected-title')
+  })
 
-  evt.target.classList.add('selected-title');
+  evt.target.classList.add('selected-title')
 
   selectedTitle.value = evt.target.innerText
-  isTitleSelected.value = true;
+  isTitleSelected.value = true
 }
 
 const selectCustomTitle = () => {
-  const liElements = document.querySelectorAll('div.selected-title');
+  const liElements = document.querySelectorAll('div.selected-title')
 
   liElements.forEach((li) => {
-    li.classList.remove('selected-title');
-  });
+    li.classList.remove('selected-title')
+  })
 
-  document.querySelector('#custom-title-input').classList.add('selected-title');
+  document.querySelector('#custom-title-input').classList.add('selected-title')
 
-  isTitleSelected.value = true;
-  isCustomTitleSelected.value = true;
+  isTitleSelected.value = true
+  isCustomTitleSelected.value = true
 }
 
 const canGenerateBook = computed(() => {
-  return description.value.length > 0
-    && isTitleSelected.value;
+  return description.value.length > 0 && isTitleSelected.value
 })
 
 const selectEpigraph = (evt) => {
-  const liElements = document.querySelectorAll('div.selected-epigraph');
+  const liElements = document.querySelectorAll('div.selected-epigraph')
 
   liElements.forEach((li) => {
-    li.classList.remove('selected-epigraph');
-  });
+    li.classList.remove('selected-epigraph')
+  })
 
-  evt.target.classList.add('selected-epigraph');
+  evt.target.classList.add('selected-epigraph')
 
   selectedEpigraph.value = evt.target.innerText
 }
 
 const generateBook = async () => {
-  const id = await uploadBook(
-    description.value,
-    selectedTitle.value,
-    selectedEpigraph.value
-  )
+  const id = await uploadBook(description.value, selectedTitle.value, selectedEpigraph.value)
 
   router.push(`/outline/${id}`)
 }
@@ -115,9 +109,8 @@ const generateBook = async () => {
   <LoadingDialog :isOpen="isAIThinking">
     <div class="lds-hourglass"></div>
     <div>
-      <i>
-        AI thinking!</i>
-      <br>
+      <i> AI thinking!</i>
+      <br />
       (this could take a minute 😴)
     </div>
   </LoadingDialog>
@@ -125,16 +118,16 @@ const generateBook = async () => {
     <div class="wrapper flow">
       <h1>AI Book Planner</h1>
       <!-- <p class="subtitle">an experiment by <a href="https://www.youtube.com/c/ami1649/">ami1649</a></p> -->
-      
-      <h3>
-        Step 1 - What is this book about?
-      </h3>
-      <textarea class="text-area" rows="3" placeholder="Describe the book want to generate"
-        v-model="description"></textarea>
 
-      <h3>
-        Step 2 - Select a title
-      </h3>
+      <h3>Step 1 - What is this book about?</h3>
+      <textarea
+        class="text-area"
+        rows="3"
+        placeholder="Describe the book want to generate"
+        v-model="description"
+      ></textarea>
+
+      <h3>Step 2 - Select a title</h3>
       <button class="button" @click="generateTitles" :disabled="!description">
         Show Me Some Titles
       </button>
@@ -147,13 +140,18 @@ const generateBook = async () => {
         </li>
         <li v-if="titleOptions.length">
           <div id="custom-title-input" @click="selectCustomTitle" class="title-option">
-            <input type="text" class="input" placeholder="Your custom title" v-model="customTitle">
+            <input
+              type="text"
+              class="input"
+              placeholder="Your custom title"
+              v-model="customTitle"
+            />
           </div>
         </li>
       </ul>
       <h3>Step 3 - Select an epigraph</h3>
 
-      <div style="display: flex;">
+      <div style="display: flex">
         <VTooltip>
           <div>
             <button class="button" @click="generateEpigraphs" :disabled="!canGenerateBook">
@@ -166,8 +164,9 @@ const generateBook = async () => {
         </VTooltip>
       </div>
 
-      <p class="subtitle" v-if="epigraphOptions.length"><i>Warning! These quotes were invented by AI and are likely not
-          real</i></p>
+      <p class="subtitle" v-if="epigraphOptions.length">
+        <i>Warning! These quotes were invented by AI and are likely not real</i>
+      </p>
 
       <ul class="title-options" v-show="description">
         <li v-for="epigraph in epigraphOptions" :key="epigraph">
@@ -177,10 +176,8 @@ const generateBook = async () => {
         </li>
       </ul>
 
-      <h3>
-        Step 4 - Generate Book
-      </h3>
-      <div style="display: flex;">
+      <h3>Step 4 - Generate Book</h3>
+      <div style="display: flex">
         <VTooltip>
           <div>
             <button class="button" @click="generateBook" :disabled="!canGenerateBook">
@@ -192,11 +189,13 @@ const generateBook = async () => {
           </template>
         </VTooltip>
       </div>
-      <br>
-      <p class="subtitle"><a href="https://www.buymeacoffee.com/ami1649">help keep this site alive 🙏🏻</a></p>
+      <br />
+      <p class="subtitle">
+        <a href="https://www.buymeacoffee.com/ami1649">help keep this site alive 🙏🏻</a>
+      </p>
       <p class="subtitle">reach out: amichaimlevy@gmail.com</p>
     </div>
-    <br><br><br>
+    <br /><br /><br />
   </main>
 </template>
 
@@ -241,7 +240,6 @@ const generateBook = async () => {
   font-family: var(--ff-accent);
 }
 
-
 @keyframes drawBorder {
   from {
     width: 0;
@@ -284,7 +282,7 @@ const generateBook = async () => {
   width: 50px;
 }
 
-button:disabled>.fire-emoji {
+button:disabled > .fire-emoji {
   filter: grayscale(100%);
 }
 
@@ -296,7 +294,7 @@ button:disabled>.fire-emoji {
 }
 
 .lds-hourglass:after {
-  content: " ";
+  content: ' ';
   display: block;
   border-radius: 50%;
   width: 0;

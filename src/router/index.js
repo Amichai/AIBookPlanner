@@ -23,7 +23,7 @@ const router = createRouter({
       props: true,
       name: 'outline',
       component: OutlineView
-    },
+    }
   ]
 })
 

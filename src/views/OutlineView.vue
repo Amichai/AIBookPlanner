@@ -4,9 +4,9 @@ import { ref, onMounted } from 'vue'
 const props = defineProps({
   guid: {
     type: String,
-    required: true,
-  },
-});
+    required: true
+  }
+})
 
 const title = ref('')
 const summary = ref('')
@@ -19,10 +19,13 @@ onMounted(async () => {
   const requestOptions = {
     method: 'GET',
     redirect: 'follow'
-  };
+  }
 
-  const response = await fetch(`https://i27f13a1be.execute-api.us-east-1.amazonaws.com/dev?id=${props.guid}`, requestOptions);
-  const responseJson = await response.json();
+  const response = await fetch(
+    `https://i27f13a1be.execute-api.us-east-1.amazonaws.com/dev?id=${props.guid}`,
+    requestOptions
+  )
+  const responseJson = await response.json()
   console.log(responseJson)
 
   const item = responseJson.Items[0]
@@ -34,32 +37,37 @@ onMounted(async () => {
   splitKeys.forEach((splitKey) => {
     if (epigraph.value.includes(splitKey)) {
       const epigraphParts = epigraph.value.split(splitKey)
-      epigraphPart1.value = epigraphParts[0] + '"';
+      epigraphPart1.value = epigraphParts[0] + '"'
       if (epigraphParts[1]) {
         epigraphPart2.value = '-' + epigraphParts[1]
       }
     }
   })
 })
-
 </script>
 
 <template>
   <main class="root">
     <div class="wrapper flow">
       <h1>{{ title }}</h1>
-      <p class="author"><i><a href="/">AI Book Outline</a></i></p>
-      <br>
+      <p class="author">
+        <i><a href="/">AI Book Planner</a></i>
+      </p>
+      <br />
       <div class="epigraph-wrapper">
         <span class="epigraph" v-if="!epigraphPart1 || !epigraphPart2">{{ epigraph }}</span>
         <div class="epigraph">
-          <span class="epigraph-part-1" v-if="epigraphPart1 && epigraphPart2">{{ epigraphPart1 }}</span>
-          <span class="epigraph-part-2" v-if="epigraphPart1 && epigraphPart2">{{ epigraphPart2 }}</span>
+          <span class="epigraph-part-1" v-if="epigraphPart1 && epigraphPart2">{{
+            epigraphPart1
+          }}</span>
+          <span class="epigraph-part-2" v-if="epigraphPart1 && epigraphPart2">{{
+            epigraphPart2
+          }}</span>
         </div>
       </div>
       {{ summary }}
-      <br>
-      <br>
+      <br />
+      <br />
     </div>
   </main>
 </template>
@@ -98,7 +106,6 @@ h3 {
   font-family: 'Times New Roman', Times, serif;
 }
 
-
 .root {
   background-color: hsl(0, 3%, 94%);
   white-space: pre-wrap;
@@ -126,5 +133,4 @@ h3 {
 a {
   color: #3366cc;
 }
-
 </style>
