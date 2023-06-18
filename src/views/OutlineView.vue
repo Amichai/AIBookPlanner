@@ -8,28 +8,67 @@
     },
   });
 
+  const title = ref('')
+  const summary = ref('')
+  const epigraph = ref('')
+
   const emit = defineEmits([])
+  onMounted(async () => {
+    const requestOptions = {
+      method: 'GET',
+      redirect: 'follow'
+    };
 
-  onMounted(() => {
-    ///loading spinner
-    ///query the book
-    /// check the timestamp
+    const response = await fetch(`https://i27f13a1be.execute-api.us-east-1.amazonaws.com/dev?id=${props.guid}`, requestOptions);
+    const responseJson = await response.json();
+    console.log(responseJson)
 
-    /// if within a thershold, query every 7 seconds
+    const item = responseJson.Items[0]
+    title.value = decodeURIComponent(item.title.S)
+    epigraph.value = decodeURIComponent(item.epigraph.S)
+    summary.value = decodeURIComponent(item.summary.S)
 
-    ///format the book so it looks beautiful on the page
   })
+
 </script>
 
 <template>
-  <div class="root">
-  testing tesitng 123
-  {{ props.guid }}
-</div>
+  <main class="root">
+    <div class="wrapper flow">
+      <h1>{{title}}</h1>
+      <p class="author">By: ChatGPT</p>
+      <h2>{{ epigraph }}</h2>
+
+    
+      {{summary}}
+      <br>
+      <br>
+
+      </div>
+      </main>
+
 </template>
 
 <style scoped>
+
+h1 {
+  margin-top: 0;
+  padding-top: 2rem;
+  text-align: center;
+}
+
+h1, h2, h3{
+  color: black;
+  font-family: 'Times New Roman', Times, serif;
+}
 .root {
+  background-color: hsl(0, 3%, 94%);;
+  white-space: pre-wrap;
+  color: black;
+  /* height: 100dvh; */
+  font-family: 'Times New Roman', Times, serif;
+}
+.wrapper {
   --clr-text: hsl(204, 20%, 15%);
   --clr-background: #ffffff;
   --clr-text-background: hsl(0, 7%, 89%);
@@ -38,12 +77,9 @@
   --clr-accent: #ff8f94;
 }
 
-:root{
-  --clr-text: hsl(204, 20%, 15%);
-  --clr-background: #ffffff;
-  --clr-text-background: hsl(0, 7%, 89%);
-  --clr-primary: #8fb4ff;
-  --clr-secondary: hsl(222, 100%, 96%);
-  --clr-accent: #ff8f94;
+.author {
+  text-align: center;
+  font-size: 1.5rem;
+  font-family: 'Times New Roman', Times, serif;
 }
 </style>

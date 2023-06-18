@@ -40,8 +40,11 @@ button {
 }
 
 button:not(:disabled) {
-  box-shadow: 0 0 0.5rem var(--clr-primary);
+  cursor: pointer;
+}
 
+button:not(:disabled):hover {
+  box-shadow: 0 0 0.5rem var(--clr-primary);
 }
 
 button:disabled {
@@ -64,13 +67,6 @@ body {
   line-height: 1.6;
   font-family: var(--ff-base);
   color: var(--clr-text);
-}
-
-h1, h2, h3 {
-  font-family: var(--ff-accent);
-  line-height: 1.1;
-  color: var(--clr-primary);
-  text-wrap: balance;
 }
 
 .wrapper {
@@ -97,6 +93,13 @@ a:hover, a:focus {
 h1 {
   --flow-space: 2em;
   margin-top: 1em;
+}
+
+h1, h2, h3 {
+  font-family: var(--ff-accent);
+  line-height: 1.1;
+  color: var(--clr-primary);
+  text-wrap: balance;
 }
 
 h2, h3 {

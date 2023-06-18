@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import { getTitles, getEpigraphs, uploadBook } from '../apiHelper.js'
 import LoadingDialog from '../components/LoadingDialog.vue';
+import router from '@/router'
 
 const description = ref('')
 const isAIThinking = ref(false)
@@ -12,12 +13,18 @@ const epigraphOptions = ref([])
 const customTitle = ref('')
 
 const convertGPTResponseToList = (response) => {
-  return response['body']
+  console.log('convertGPTResponseToList')
+  console.log(response)
+  const result = response['body']
+    .replace(/(^")|("$)/g, '')
     .split('\\n')
-    .map((title) => title.trim().replace(/(^")|("$)/g, ''))
+    .map((title) => title.trim())
     .map((title) => title.replace(/^\d+\.\s*/, ''))
     .map((title) => title.replace(/\\"/g, '"'))
     .filter((title) => title)
+
+  console.log(result)
+  return result
 }
 
 
@@ -93,28 +100,14 @@ const selectEpigraph = (evt) => {
   selectedEpigraph.value = evt.target.innerText
 }
 
-const generateBook = () => {
-
-  // uploadBook(
-  //   description.value,
-  //   selectedTitle.value,
-  //   selectedEpigraph.value
-  // )
-
-  uploadBook(
-    "A reluctant space explorer embarks on a mission to locate a mysterious planet that could hold the key to saving humanity.",
-    "From the Stars",
-    "epigraph1"
+const generateBook = async () => {
+  const id = await uploadBook(
+    description.value,
+    selectedTitle.value,
+    selectedEpigraph.value
   )
-  // upload to dynamo: description, title, epigraph
-  /// trigger a lambda to generate the book
-  /// Open a new tab with the book content 
 
-  /// write what we have to dynamo, kick off a long running lambda
-  //Lambda -> OpenAI API
-  //Navigate to a book page with a unique url blank chapters
-
-  //suggested donation dialog
+  router.push(`/outline/${id}`)
 }
 </script>
 
@@ -130,8 +123,9 @@ const generateBook = () => {
   </LoadingDialog>
   <main>
     <div class="wrapper flow">
-      <h1>AI Book Generator</h1>
-      <p class="subtitle">built by <a href="https://www.youtube.com/c/ami1649/">ami1649</a></p>
+      <h1>AI Book Planner</h1>
+      <p class="subtitle">an experiment by <a href="https://www.youtube.com/c/ami1649/">ami1649</a></p>
+      <p class="subtitle">reach out: amichaimlevy@gmail.com</p>
       <h3>
         Step 1 - What is this book about?
       </h3>
@@ -189,7 +183,7 @@ const generateBook = () => {
       <div style="display: flex;">
         <VTooltip>
           <div>
-            <button class="button" @click="generateBook" :disabled="!canGenerateBook && false">
+            <button class="button" @click="generateBook" :disabled="!canGenerateBook">
               Let's do this 🫡
             </button>
           </div>
@@ -198,6 +192,8 @@ const generateBook = () => {
           </template>
         </VTooltip>
       </div>
+      <br>
+      <p class="subtitle"><a href="https://www.buymeacoffee.com/ami1649">help keep this site alive 🙏🏻</a></p>
     </div>
     <br><br><br>
   </main>

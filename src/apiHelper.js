@@ -46,11 +46,12 @@ export const getEpigraphs = async (description, title) => {
 }
 
 export const uploadBook = async (description, title, epigraph) => {
+  const id = uuidv4() 
   let data = { 
-    uuid: uuidv4(),
-    description,
-    title,
-    epigraph,
+    uuid: id,
+    description: encodeURIComponent(description),
+    title: encodeURIComponent(title),
+    epigraph: encodeURIComponent(epigraph)
    };
 
   fetch('https://i27f13a1be.execute-api.us-east-1.amazonaws.com/dev/', {
@@ -64,4 +65,6 @@ export const uploadBook = async (description, title, epigraph) => {
   .then(response => response.json())
   .then(data => console.log('Success:', data))
   .catch((error) => console.error('Error:', error));
+
+  return id
 }
