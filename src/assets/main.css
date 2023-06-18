@@ -3,12 +3,13 @@
 }
 
 :root {
-  --clr-text: hsl(204, 20%, 15%);
-  --clr-background: #ffffff;
-  --clr-text-background: hsl(0, 7%, 89%);
+  --clr-text: hsl(204, 20%, 85%);
+  --clr-background: #000000;
+  --clr-text-background: hsl(255, 4%, 19%);
   --clr-primary: #8fb4ff;
-  --clr-secondary: hsl(222, 100%, 96%);
+  --clr-secondary: hsl(222, 100%, 18%);
   --clr-accent: #ff8f94;
+
 
   --ff-accent: 'Lora', serif;
   --ff-base: 'Quattrocento Sans', sans-serif;
@@ -21,25 +22,36 @@
   --fs-3: clamp(1.94rem, calc(1.77rem + 0.87vw), 2.44rem);
   --fs-4: clamp(2.33rem, calc(2.08rem + 1.25vw), 3.05rem);
   --fs-5: clamp(2.80rem, calc(2.45rem + 1.77vw), 3.82rem);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --clr-text: hsl(204, 20%, 85%);
-    --clr-background: #000000;
-    --clr-text-background: hsl(255, 4%, 19%);
-    --clr-primary: #8fb4ff;
-    --clr-secondary: hsl(222, 100%, 18%);
-    --clr-accent: #ff8f94;
-  }
+  background-color: var(--clr-background);
 }
 
 * {
   margin: 0;
 }
 
+button, input, textarea {
+  color: var(--clr-text);
+  border-radius: 0.3rem;
+}
+
+button {
+  background-color: var(--clr-secondary);
+}
+
+button:not(:disabled) {
+  box-shadow: 0 0 0.5rem var(--clr-primary);
+
+}
+
+button:disabled {
+  opacity: 0.5;
+}
+
+
+
 html {
-  color-scheme: light dark;
+  /* color-scheme: light dark; */
 }
 
 img {
