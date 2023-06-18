@@ -124,8 +124,8 @@ const generateBook = async () => {
   <main>
     <div class="wrapper flow">
       <h1>AI Book Planner</h1>
-      <p class="subtitle">an experiment by <a href="https://www.youtube.com/c/ami1649/">ami1649</a></p>
-      <p class="subtitle">reach out: amichaimlevy@gmail.com</p>
+      <!-- <p class="subtitle">an experiment by <a href="https://www.youtube.com/c/ami1649/">ami1649</a></p> -->
+      
       <h3>
         Step 1 - What is this book about?
       </h3>
@@ -161,7 +161,7 @@ const generateBook = async () => {
             </button>
           </div>
           <template #popper v-if="!canGenerateBook && titleOptions.length">
-            Select a book title first
+            Select a book title
           </template>
         </VTooltip>
       </div>
@@ -188,12 +188,13 @@ const generateBook = async () => {
             </button>
           </div>
           <template #popper v-if="!canGenerateBook && titleOptions.length">
-            Click a book title to select it
+            Select a book title
           </template>
         </VTooltip>
       </div>
       <br>
       <p class="subtitle"><a href="https://www.buymeacoffee.com/ami1649">help keep this site alive 🙏🏻</a></p>
+      <p class="subtitle">reach out: amichaimlevy@gmail.com</p>
     </div>
     <br><br><br>
   </main>

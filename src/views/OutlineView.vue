@@ -11,6 +11,8 @@
   const title = ref('')
   const summary = ref('')
   const epigraph = ref('')
+  const epigraphPart1 = ref('')
+  const epigraphPart2 = ref('')
 
   const emit = defineEmits([])
   onMounted(async () => {
@@ -28,6 +30,11 @@
     epigraph.value = decodeURIComponent(item.epigraph.S)
     summary.value = decodeURIComponent(item.summary.S)
 
+    const epigraphParts = epigraph.value.split('" -')
+    epigraphPart1.value = epigraphParts[0] + '"';
+    if(epigraphParts[1]) {
+      epigraphPart2.value = '-' + epigraphParts[1]
+    }
   })
 
 </script>
@@ -36,8 +43,19 @@
   <main class="root">
     <div class="wrapper flow">
       <h1>{{title}}</h1>
-      <p class="author">By: ChatGPT</p>
-      <h2>{{ epigraph }}</h2>
+      <!-- <p class="author"><i>AI Outline</i></p> -->
+      <br>
+      <div class="epigraph-wrapper">
+        <span class="epigraph" v-if="!epigraphPart1 || !epigraphPart2">{{ epigraph }}</span>
+        <div class="epigraph">
+          <span class="epigraph-part-1" v-if="epigraphPart1 && epigraphPart2">{{ epigraphPart1 }}</span>
+          <span class="epigraph-part-2" v-if="epigraphPart1 && epigraphPart2">{{ epigraphPart2 }}</span>
+        </div>
+
+
+      </div>
+
+      
 
     
       {{summary}}
@@ -55,6 +73,25 @@ h1 {
   margin-top: 0;
   padding-top: 2rem;
   text-align: center;
+}
+
+.epigraph-part-1 {
+  font-style: italic;
+}
+.epigraph-part-2 {
+  text-align: right;
+}
+
+.epigraph-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.epigraph {
+  max-width: 45ch;
+  display: flex;
+  flex-direction: column;
 }
 
 h1, h2, h3{

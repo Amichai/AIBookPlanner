@@ -30,5 +30,6 @@ export default {
   align-items: center;
   background: rgba(0, 0, 0, 0.75);
   text-align: center;
+  z-index: 9999;
 }
 </style>
